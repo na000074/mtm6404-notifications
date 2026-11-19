@@ -1,33 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import React from 'react'
+import notificationData from './notifications'
 import './App.css'
 
+function Notification(props) {
+  return (
+    <li className="notification">
+      <p>Notification #{props.id}</p>
+      <h2>{props.name}</h2>
+      <p>{props.children}</p>
+      <button onClick={props.onClear}>Clear</button>
+    </li>
+  )
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [notifications, setNotifications] = React.useState(notificationData)
+
+  function clearNotification(id) {
+    setNotifications(notifications.filter(notification => notification.id !== id))
+  }
+
+  function clearAllNotifications() {
+    setNotifications([])
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <main className="App">
+      <h1>Notifications</h1>
+      <p>Total notifications: {notifications.length}</p>
+      <button onClick={clearAllNotifications} disabled={notifications.length === 0}>
+        Clear All
+      </button>
+
+      {notifications.length === 0 ? (
+        <p>No notifications to display.</p>
+      ) : (
+        <ul className="notifications">
+          {notifications.map(notification => (
+            <Notification
+              key={notification.id}
+              id={notification.id}
+              name={notification.name}
+              onClear={() => clearNotification(notification.id)}
+            >
+              {notification.message}
+            </Notification>
+          ))}
+        </ul>
+      )}
+    </main>
   )
 }
 
